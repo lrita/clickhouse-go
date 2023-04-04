@@ -2490,6 +2490,9 @@ func TestComplexJSONWithDistributed(t *testing.T) {
 	defer teardown(t)
 
 	ctx := context.Background()
+	database := ""
+	require.NoError(t, conn.QueryRow(ctx, "SELECT currentDatabase()").Scan(&database))
+	t.Logf("database=%v", database)
 	conn.Exec(ctx, "DROP TABLE IF EXISTS json_test_distributed")
 	ddl := `CREATE table json_test_distributed(event JSON) ENGINE = Distributed('test_cluster', currentDatabase(), 'json_test', rand());`
 	require.NoError(t, conn.Exec(ctx, ddl))
