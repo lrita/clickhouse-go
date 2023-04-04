@@ -2497,7 +2497,8 @@ func TestComplexJSONWithDistributed(t *testing.T) {
 		require.NoError(t, conn.Exec(ctx, "DROP TABLE IF EXISTS json_test_distributed"))
 	}()
 
-	batch := prepareBatch(t, conn, ctx)
+	batch, err := conn.PrepareBatch(ctx, "INSERT INTO json_test_distributed")
+	require.NoError(t, err)
 	row1 := GithubEvent{
 		Title: "Document JSON support",
 		Type:  "Issue",
@@ -2535,8 +2536,7 @@ func TestComplexJSONWithDistributed(t *testing.T) {
 	require.NoError(t, batch.Send())
 
 	var events []GithubEvent
-	rows, err := conn.Query(ctx, "SELECT * FROM json_test")
-	// rows, err := conn.Query(ctx, "SELECT * FROM json_test_distributed")
+	rows, err := conn.Query(ctx, "SELECT * FROM json_test_distributed")
 	require.NoError(t, err)
 	for rows.Next() {
 		events = append(events, GithubEvent{})
