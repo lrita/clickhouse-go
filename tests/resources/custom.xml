@@ -36,6 +36,7 @@
         <test_cluster>
             <shard>
                 <replica>
+                    <internal_replication>true</internal_replication>
                     <host>127.0.0.1</host>
                     <port>9000</port>
                     <user>default</user>
