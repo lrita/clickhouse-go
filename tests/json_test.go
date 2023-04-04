@@ -2510,7 +2510,7 @@ func TestComplexJSONWithDistributed(t *testing.T) {
 		t.Log(values...)
 	}
 
-	ddl := fmt.Sprintf(`CREATE table json_test_distributed(event JSON) ENGINE = Distributed('test_cluster', currentDatabase(), 'json_test', rand());`)
+	ddl := `CREATE TABLE json_test_distributed ON CLUSTER test_shard_localhost (event JSON) ENGINE = Distributed('test_shard_localhost', currentDatabase(), 'json_test', rand());`
 	require.NoError(t, conn.Exec(ctx, ddl))
 	defer func() {
 		require.NoError(t, conn.Exec(ctx, "DROP TABLE IF EXISTS json_test_distributed"))
