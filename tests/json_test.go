@@ -2501,7 +2501,7 @@ func TestComplexJSONWithDistributed(t *testing.T) {
 	for rowsx.Next() {
 		values := make([]interface{}, len(ct))
 		for i := range ct {
-			values[i] = reflect.New(ct[i].ScanType()).Elem().Interface()
+			values[i] = reflect.New(ct[i].ScanType()).Interface()
 		}
 		require.NoError(t, rowsx.Scan(values...))
 		t.Log(values...)
