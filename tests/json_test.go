@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"log"
 	"net"
+	"reflect"
 	"sort"
 	"testing"
 	"time"
@@ -2494,12 +2495,16 @@ func TestComplexJSONWithDistributed(t *testing.T) {
 	require.NoError(t, conn.QueryRow(ctx, "SELECT currentDatabase()").Scan(&database))
 	t.Logf("database=%v", database)
 	conn.Exec(ctx, "DROP TABLE IF EXISTS json_test_distributed")
-	rowsx, err := conn.Query(ctx, "SELECT * FROM system.clusters FORMAT JSONEachRow")
+	rowsx, err := conn.Query(ctx, "SELECT * FROM system.clusters")
 	require.NoError(t, err)
+	ct := rowsx.ColumnTypes()
 	for rowsx.Next() {
-		m := map[string]interface{}{}
-		require.NoError(t, rowsx.Scan(&m))
-		t.Logf(toJson(m))
+		values := make([]interface{}, len(ct))
+		for i := range ct {
+			values[i] = reflect.New(ct[i].ScanType()).Elem().Interface()
+		}
+		require.NoError(t, rowsx.Scan(values...))
+		t.Log(values...)
 	}
 
 	ddl := fmt.Sprintf(`CREATE table json_test_distributed(event JSON) ENGINE = Distributed('test_cluster', currentDatabase(), 'json_test', rand());`)
