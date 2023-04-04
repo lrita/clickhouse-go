@@ -2504,6 +2504,9 @@ func TestComplexJSONWithDistributed(t *testing.T) {
 			values[i] = reflect.New(ct[i].ScanType()).Interface()
 		}
 		require.NoError(t, rowsx.Scan(values...))
+		for i := range values {
+			values[i] = reflect.ValueOf(values[i]).Elem().Interface()
+		}
 		t.Log(values...)
 	}
 
@@ -2565,4 +2568,5 @@ func TestComplexJSONWithDistributed(t *testing.T) {
 	require.Equal(t, 2, len(events))
 	assert.JSONEq(t, toJson(row1), toJson(events[0]))
 	assert.JSONEq(t, toJson(row2), toJson(events[1]))
+	require.True(t, false)
 }
