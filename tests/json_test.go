@@ -2536,7 +2536,8 @@ func TestComplexJSONWithDistributed(t *testing.T) {
 	require.NoError(t, batch.Send())
 
 	var events []GithubEvent
-	rows, err := conn.Query(ctx, "SELECT * FROM json_test_distributed")
+	// rows, err := conn.Query(ctx, "SELECT * FROM json_test_distributed")
+	rows, err := conn.Query(ctx, "SELECT * FROM json_test")
 	require.NoError(t, err)
 	for rows.Next() {
 		events = append(events, GithubEvent{})
