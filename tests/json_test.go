@@ -2531,7 +2531,8 @@ func TestComplexJSONWithDistributed(t *testing.T) {
 			{Id: 2344, Achievement: Achievement{Name: "Managing S3 buckets", AwardedDate: testDate.Truncate(time.Second).Add(time.Hour * -700)}, Organizations: []string{"Support Engineer", "Consulting"}, Name: "Melyvn", Repositories: []Repository{{URL: "https://github.com/ClickHouse/support", Releases: []Releases{{Version: "1.0.0"}, {Version: "2.3.0"}, {Version: "2.4.0"}}}}},
 		},
 	}
-	require.NoError(t, batch.Append(row1, row2))
+	require.NoError(t, batch.Append(row1))
+	require.NoError(t, batch.Append(row2))
 	require.NoError(t, batch.Send())
 
 	var (
