@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"log"
 	"net"
+	"sort"
 	"testing"
 	"time"
 )
@@ -2533,21 +2534,17 @@ func TestComplexJSONWithDistributed(t *testing.T) {
 	require.NoError(t, batch.Append(row2))
 	require.NoError(t, batch.Send())
 
-	var (
-		event1 GithubEvent
-		event2 GithubEvent
-		n      int
-	)
-	rows, err := conn.Query(ctx, "SELECT * FROM json_test_distributed ORDER BY event.assignee.id ASC")
+	var events []GithubEvent
+	rows, err := conn.Query(ctx, "SELECT * FROM json_test_distributed")
 	require.NoError(t, err)
 	for rows.Next() {
-		if n == 0 {
-			require.NoError(t, rows.Scan(event1))
-		} else {
-			require.NoError(t, rows.Scan(event2))
-		}
-		n++
+		events = append(events, GithubEvent{})
+		require.NoError(t, rows.Scan(&events[len(events)-1]))
 	}
-	assert.JSONEq(t, toJson(row1), toJson(event1))
-	assert.JSONEq(t, toJson(row2), toJson(event2))
+	sort.Slice(events, func(i, j int) bool {
+		return events[i].Assignee.Id < events[j].Assignee.Id
+	})
+	require.Equal(t, 2, len(events))
+	assert.JSONEq(t, toJson(row1), toJson(events[0]))
+	assert.JSONEq(t, toJson(row2), toJson(events[1]))
 }
