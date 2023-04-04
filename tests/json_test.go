@@ -2498,7 +2498,7 @@ func TestComplexJSONWithDistributed(t *testing.T) {
 	require.NoError(t, err)
 	for rowsx.Next() {
 		m := map[string]interface{}{}
-		rowsx.Scan(&m)
+		require.NoError(t, rowsx.Scan(&m))
 		t.Logf(toJson(m))
 	}
 
