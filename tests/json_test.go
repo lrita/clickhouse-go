@@ -2540,7 +2540,7 @@ func TestComplexJSONWithDistributed(t *testing.T) {
 		event2 GithubEvent
 		n      int
 	)
-	rows, err := conn.Query(ctx, "SELECT * FROM json_test_distributed ORDER BY assignee.id")
+	rows, err := conn.Query(ctx, "SELECT * FROM json_test_distributed ORDER BY assignee.Id")
 	require.NoError(t, err)
 	for rows.Next() {
 		if n == 0 {

@@ -848,17 +848,11 @@ func (jCol *JSONObject) Rows() int {
 }
 
 func (jCol *JSONObject) Row(i int, ptr bool) interface{} {
-	if jCol.decoding != nil {
-		return jCol.decoding.Row(i, ptr)
-	}
-	panic("bug")
+	return jCol.decoding.Row(i, ptr)
 }
 
 func (jCol *JSONObject) ScanRow(dest interface{}, row int) error {
-	if jCol.decoding != nil {
-		return jCol.decoding.ScanRow(dest, row)
-	}
-	panic("bug")
+	return jCol.decoding.ScanRow(dest, row)
 }
 
 func (jCol *JSONObject) Append(v interface{}) (nulls []uint8, err error) {
