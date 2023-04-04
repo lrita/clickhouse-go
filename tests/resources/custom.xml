@@ -32,4 +32,16 @@
         </client>
     </openSSL>
     <display_name>clickhouse</display_name>
+    <remote_servers>
+        <test_cluster>
+            <shard>
+                <replica>
+                    <host>127.0.0.1</host>
+                    <port>9000</port>
+                    <user>default</user>
+                    <password>ClickHouse</password>
+                </replica>
+            </shard>
+        </test_cluster>
+    </remote_servers>
 </clickhouse>

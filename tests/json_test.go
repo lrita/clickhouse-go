@@ -2489,10 +2489,8 @@ func TestComplexJSONWithDistributed(t *testing.T) {
 	defer teardown(t)
 
 	ctx := context.Background()
-	cluster := ""
-	require.NoError(t, conn.QueryRow(ctx, "SELECT `cluster` FROM system.clusters LIMIT 1;").Scan(&cluster))
 	conn.Exec(ctx, "DROP TABLE IF EXISTS json_test_distributed")
-	ddl := fmt.Sprintf(`CREATE table json_test_distributed(event JSON) ENGINE = Distributed('%s', currentDatabase(), 'json_test', rand());`, cluster)
+	ddl := `CREATE table json_test_distributed(event JSON) ENGINE = Distributed('test_cluster', currentDatabase(), 'json_test', rand());`
 	require.NoError(t, conn.Exec(ctx, ddl))
 	defer func() {
 		require.NoError(t, conn.Exec(ctx, "DROP TABLE IF EXISTS json_test_distributed"))
