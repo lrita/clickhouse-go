@@ -2490,6 +2490,10 @@ func TestComplexJSONWithDistributed(t *testing.T) {
 	conn, teardown := setupTest(t)
 	defer teardown(t)
 
+	if !CheckMinServerServerVersion(conn, 23, 1, 0) {
+		t.Skip(fmt.Errorf("unsupported clickhouse version"))
+	}
+
 	ctx := context.Background()
 	database := ""
 	require.NoError(t, conn.QueryRow(ctx, "SELECT currentDatabase()").Scan(&database))
@@ -2510,7 +2514,7 @@ func TestComplexJSONWithDistributed(t *testing.T) {
 		t.Log(values...)
 	}
 
-	ddl := `CREATE TABLE json_test_distributed(event JSON) ENGINE = Distributed('test_shard_localhost', currentDatabase(), 'json_test', rand());`
+	ddl := `CREATE TABLE json_test_distributed(event JSON) ENGINE = Distributed('test_cluster', currentDatabase(), 'json_test', rand());`
 	require.NoError(t, conn.Exec(ctx, ddl))
 	defer func() {
 		require.NoError(t, conn.Exec(ctx, "DROP TABLE IF EXISTS json_test_distributed"))
